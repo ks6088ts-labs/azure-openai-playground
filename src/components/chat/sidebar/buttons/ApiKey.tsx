@@ -39,7 +39,7 @@ export default function ApiKey({}: Props) {
           </div>
         </div>
       ) : (
-        <AddTokenModal className="w-full bg-primary p-1 text-left hover:bg-secondary" />
+        // <AddTokenModal className="w-full bg-primary p-1 text-left hover:bg-secondary" />
       )}
     </div>
   );

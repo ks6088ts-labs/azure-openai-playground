@@ -15,7 +15,7 @@ export default function ChatPlaceholder({}: Props) {
           that allows you to play with your GPT-4 api key early!
         </p>
         <div className="m-4 flex items-center justify-center">
-          <AddTokenModal />
+          {/* <AddTokenModal /> */}
         </div>
         <p className="mt-4 text-lg">
           Want more freedom? Check out the{" "}
