@@ -30,9 +30,9 @@ export default async function handler(
   }
 
   const token = req.headers.get("Authorization")?.split(" ")[1];
-  if (!token) {
-    return new Response("Missing token", { status: 401 });
-  }
+  // if (!token) {
+  //   return new Response("Missing token", { status: 401 });
+  // }
 
   const config = {
     model: model || defaultConfig.model,
