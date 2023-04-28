@@ -25,9 +25,9 @@ export const getOpenAICompletion = async (
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 
-  const response = await fetch(process.env.API_URL!, {
+  const response = await fetch(`https://${process.env.AZURE_OPENAI_NAME}.openai.azure.com/openai/deployments/${process.env.AZURE_OPENAI_DEPLOYMENT_NAME}/chat/completions?api-version=2023-03-15-preview`, {
     headers: {
-      "api-key": process.env.API_KEY!,
+      "api-key": process.env.AZURE_OPENAI_API_KEY!,
       "Content-Type": "application/json",
     },
     method: "POST",
