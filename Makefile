@@ -42,3 +42,15 @@ docker-run: ## docker run
 .PHONY: docker-push
 docker-push: ## docker push
 	$(DOCKER) push $(DOCKER_TAG_NAME)
+
+AZURE_CONTAINER_APP_NAME ?= azure-openai-playground-$(GIT_REVISION)
+
+.PHONY: azure-deploy-aca
+azure-deploy-aca: ## deploy to azure container apps
+	az containerapp up \
+		--name $(AZURE_CONTAINER_APP_NAME) \
+		--image $(DOCKER_TAG_NAME) \
+		--env-vars "AZURE_OPENAI_API_KEY=$(AZURE_OPENAI_API_KEY)" "AZURE_OPENAI_NAME=$(AZURE_OPENAI_NAME)" "AZURE_OPENAI_DEPLOYMENT_NAME=$(AZURE_OPENAI_DEPLOYMENT_NAME)" \
+		--environment "production" \
+		--ingress external \
+		--target-port 3000
