@@ -51,7 +51,7 @@ export default async function handler(
   };
 
   try {
-    const stream = await getOpenAICompletion(token, payload);
+    const stream = await getOpenAICompletion(token!, payload);
     return new Response(stream);
   } catch (e: any) {
     return new Response(e.message || "Error fetching response.", {

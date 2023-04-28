@@ -7,8 +7,9 @@ DOCKER_IMAGE_NAME ?= azure-openai-playground
 DOCKER_COMMAND ?=
 DOCKER_TAG_NAME ?= $(DOCKERHUB_USERNAME)/$(DOCKER_IMAGE_NAME):$(GIT_TAG)
 
-API_KEY ?=
-API_URL ?= "https://YOUR_AZURE_OPENAI_NAME.openai.azure.com/openai/deployments/YOUR_DEPLOYMENT/chat/completions?api-version=2023-03-15-preview"
+AZURE_OPENAI_API_KEY ?=
+AZURE_OPENAI_NAME ?=
+AZURE_OPENAI_DEPLOYMENT_NAME ?=
 
 PLATFORM ?= linux/amd64
 
@@ -33,8 +34,9 @@ docker-build: ## docker build
 docker-run: ## docker run
 	$(DOCKER) run --platform=$(PLATFORM) --rm \
 		-p "3000:3000" \
-		--env "API_KEY=$(API_KEY)" \
-		--env "API_URL=$(API_URL)" \
+		--env "AZURE_OPENAI_API_KEY=$(AZURE_OPENAI_API_KEY)" \
+		--env "AZURE_OPENAI_NAME=$(AZURE_OPENAI_NAME)" \
+		--env "AZURE_OPENAI_DEPLOYMENT_NAME=$(AZURE_OPENAI_DEPLOYMENT_NAME)" \
 		$(DOCKER_TAG_NAME)
 
 .PHONY: docker-push
