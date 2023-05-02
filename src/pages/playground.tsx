@@ -29,7 +29,7 @@ export default function Playground() {
                 <PlaygroundMessages />
               </div>
             </div>
-            <ConfigSidebar />
+            {/* <ConfigSidebar /> */}
           </div>
         </PlaygroundProvider>
       </main>
