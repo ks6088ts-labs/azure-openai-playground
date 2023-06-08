@@ -6,8 +6,13 @@ import React from "react";
 import { getConversation } from "./../../utils/History";
 import { useOpenAI } from "@/context/OpenAIProvider";
 import ChatHeader from "./../../components/chat/ChatHeader";
+import { GetServerSideProps } from "next";
 
-export default function Chat() {
+type Props = {
+  branding: string;
+};
+
+export default function Chat(props: Props) {
   const { loadConversation, conversationId } = useOpenAI();
   const { id } = useRouter().query;
 
@@ -37,9 +42,21 @@ export default function Chat() {
       </Head>
       <div className="max-w-screen relative h-screen max-h-screen w-screen overflow-hidden">
         <ChatHeader />
-        <ChatMessages />
+        <ChatMessages branding={props.branding} />
         <ChatSidebar />
       </div>
     </React.Fragment>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const props: Props = {
+    branding: process.env.AZURE_OPENAI_SITE_BRANDING || "Azure OpenAI Playground",
+  };
+
+  console.log("server side / branding: " + props.branding);
+
+  return {
+    props: props,
+  };
+};
