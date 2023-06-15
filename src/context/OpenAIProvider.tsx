@@ -255,6 +255,23 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
     return accessToken;
   };
 
+  const refreshToken = async () => {
+    try {
+      await fetch(`/.auth/refresh`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(`got data ${data}`);
+        })
+        .catch((error) => {
+          // FIXME: pass through for now
+          console.error(error);
+        });
+    } catch (error) {
+      // FIXME: pass through for now
+      console.error(error);
+    }
+  };
+
   const submit = useCallback(
     async (messages_: OpenAIChatMessage[] = []) => {
       if (loading) return;
@@ -291,6 +308,9 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
           const { value } = await reader.read();
           const chunkValue = decoder.decode(value);
           const { error } = JSON.parse(chunkValue);
+
+          // FIXME: refresh token on error
+          await refreshToken();
 
           throw new Error(
             error?.message ||
