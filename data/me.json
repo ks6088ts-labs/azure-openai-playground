@@ -1,0 +1,8 @@
+{
+  "me": {
+    "access_token": "access_token",
+    "expires_on": "2023-06-13T08:52:48.7389101Z",
+    "provider_name": "aad",
+    "command": "json-server --watch data/me.json -p 8888"
+  }
+}

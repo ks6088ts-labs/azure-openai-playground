@@ -5,6 +5,11 @@ import {
   ReconnectInterval,
 } from "eventsource-parser";
 
+// Enabled by default. Stream option is disabled only when AZURE_OPENAI_API_STREAM_ENABLED is set to `false`.
+const isStreamEnabled = () => {
+  return process.env.AZURE_OPENAI_API_STREAM_ENABLED == "false" ? false : true;
+};
+
 export const defaultConfig = {
   model: "gpt-3.5-turbo",
   temperature: 0.5,
@@ -12,11 +17,19 @@ export const defaultConfig = {
   top_p: 1,
   frequency_penalty: 0,
   presence_penalty: 0.6,
+  stream: isStreamEnabled(),
 };
 
 export type OpenAIRequest = {
   messages: OpenAIChatMessage[];
 } & OpenAIConfig;
+
+const getUrl = () => {
+  if (process.env.AZURE_OPENAI_API_URL == undefined) {
+    return `https://${process.env.AZURE_OPENAI_NAME}.openai.azure.com/openai/deployments/${process.env.AZURE_OPENAI_DEPLOYMENT_NAME}/chat/completions?api-version=${process.env.AZURE_OPENAI_API_VERSION}`;
+  }
+  return process.env.AZURE_OPENAI_API_URL || "";
+};
 
 export const getOpenAICompletion = async (
   token: string,
@@ -24,11 +37,13 @@ export const getOpenAICompletion = async (
 ) => {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
+  const url = getUrl();
 
-  const response = await fetch(`https://${process.env.AZURE_OPENAI_NAME}.openai.azure.com/openai/deployments/${process.env.AZURE_OPENAI_DEPLOYMENT_NAME}/chat/completions?api-version=${process.env.AZURE_OPENAI_API_VERSION}`, {
+  const response = await fetch(url, {
     headers: {
       "api-key": process.env.AZURE_OPENAI_API_KEY!,
       "Content-Type": "application/json",
+      "Authorization": `${token}`,
     },
     method: "POST",
     body: JSON.stringify(payload),
@@ -71,9 +86,24 @@ export const getOpenAICompletion = async (
         }
       }
 
-      const parser = createParser(onParse);
-      for await (const chunk of response.body as any) {
-        parser.feed(decoder.decode(chunk));
+      if (isStreamEnabled()) {
+        const parser = createParser(onParse);
+        for await (const chunk of response.body as any) {
+          parser.feed(decoder.decode(chunk));
+        }
+      } else {
+        try {
+          const jsonData = (await response.json()) as any;
+          const text = jsonData.choices[0].message?.content;
+          const usage = jsonData.usage;
+          const systemMessage =
+            "[total tokens:" + String(usage.total_tokens) + "]";
+          const queue = encoder.encode(text + "\n" + systemMessage);
+          controller.enqueue(queue);
+          controller.close();
+        } catch (e) {
+          controller.error(e);
+        }
       }
     },
   });

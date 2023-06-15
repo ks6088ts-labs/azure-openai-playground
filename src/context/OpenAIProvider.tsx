@@ -12,7 +12,7 @@ import {
   OpenAIChatMessage,
   OpenAIConfig,
   OpenAISystemMessage,
-  OpenAIChatModels
+  OpenAIChatModels,
 } from "@/utils/OpenAI";
 import React, { PropsWithChildren, useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -139,7 +139,6 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
         ...newConfig,
       };
     });
-
   };
 
   const updateMessageContent = (id: number, content: string) => {
@@ -235,6 +234,27 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
     updateConversation(id, { name });
   };
 
+  const getEasyAuthToken = async () => {
+    var accessToken = "default";
+    try {
+      // await fetch(`http://localhost:8888/me`)
+      await fetch(`/.auth/me`)
+        .then((response) => response.json())
+        .then((data) => {
+          // accessToken = data.access_token;
+          accessToken = data[0].access_token;
+        })
+        .catch((error) => {
+          // FIXME: pass through for now
+          console.error(error);
+        });
+    } catch (error) {
+      // FIXME: pass through for now
+      console.error(error);
+    }
+    return accessToken;
+  };
+
   const submit = useCallback(
     async (messages_: OpenAIChatMessage[] = []) => {
       if (loading) return;
@@ -243,12 +263,14 @@ export default function OpenAIProvider({ children }: PropsWithChildren) {
       messages_ = messages_.length ? messages_ : messages;
 
       try {
+        // FIXME: try to get easy auth token every time
+        const accessToken = await getEasyAuthToken();
         const decoder = new TextDecoder();
         const { body, ok } = await fetch("/api/completion", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             ...config,

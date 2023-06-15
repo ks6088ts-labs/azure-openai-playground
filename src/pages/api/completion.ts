@@ -41,7 +41,7 @@ export default async function handler(
     top_p: top_p || defaultConfig.top_p,
     frequency_penalty: frequency_penalty || defaultConfig.frequency_penalty,
     presence_penalty: presence_penalty || defaultConfig.presence_penalty,
-    stream: true,
+    stream: defaultConfig.stream,
     n: 1,
   };
 
