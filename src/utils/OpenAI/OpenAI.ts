@@ -68,6 +68,11 @@ export const getOpenAICompletion = async (
 
           try {
             const json = JSON.parse(data);
+
+            // adhoc fix
+            if (json.choices.length === 0) {
+              return;
+            }
             const finishReason = json.choices[0].finish_reason || "";
             if (finishReason === "stop") {
               controller.close();
