@@ -1,4 +1,5 @@
-[![test](https://github.com/ks6088ts-labs/azure-openai-playground/workflows/test/badge.svg)](https://github.com/ks6088ts-labs/azure-openai-playground/actions/workflows/test.yml)
+[![test](https://github.com/ks6088ts-labs/azure-openai-playground/actions/workflows/test.yml/badge.svg)](https://github.com/ks6088ts-labs/azure-openai-playground/actions/workflows/test.yml)
+[![release](https://github.com/ks6088ts-labs/azure-openai-playground/actions/workflows/release.yml/badge.svg)](https://github.com/ks6088ts-labs/azure-openai-playground/actions/workflows/release.yml)
 
 # GPT-4 Playground
 

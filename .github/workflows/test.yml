@@ -12,7 +12,5 @@ jobs:
         with:
           node-version: 18
           cache: yarn
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-      - name: Build an app
-        run: yarn build
+      - name: Run CI test
+        run: make ci-test

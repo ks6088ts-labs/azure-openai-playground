@@ -11,6 +11,7 @@ AZURE_OPENAI_API_KEY ?= $(AZURE_OPENAI_API_KEY)
 AZURE_OPENAI_NAME ?= $(AZURE_OPENAI_NAME)
 AZURE_OPENAI_DEPLOYMENT_NAME ?= $(AZURE_OPENAI_DEPLOYMENT_NAME)
 AZURE_OPENAI_API_VERSION ?= "2023-05-15"
+AZURE_OPENAI_API_URL ?=
 PLATFORM ?= linux/amd64
 
 .PHONY: help
@@ -20,7 +21,12 @@ help:
 
 .PHONY: install-deps-dev
 install-deps-dev: ## install dependencies for development
-	yarn install
+	yarn install --frozen-lockfile
+
+.PHONY: ci-test
+ci-test: install-deps-dev ## ci-test
+	yarn lint
+	yarn build
 
 .PHONY: server
 server: ## server
@@ -38,6 +44,7 @@ docker-run: ## docker run
 		--env "AZURE_OPENAI_NAME=$(AZURE_OPENAI_NAME)" \
 		--env "AZURE_OPENAI_DEPLOYMENT_NAME=$(AZURE_OPENAI_DEPLOYMENT_NAME)" \
 		--env "AZURE_OPENAI_API_VERSION=$(AZURE_OPENAI_API_VERSION)" \
+		--env "AZURE_OPENAI_API_URL=$(AZURE_OPENAI_API_URL)" \
 		$(DOCKER_TAG_NAME)
 
 .PHONY: docker-push

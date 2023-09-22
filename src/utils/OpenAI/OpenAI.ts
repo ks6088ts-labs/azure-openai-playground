@@ -18,14 +18,23 @@ export type OpenAIRequest = {
   messages: OpenAIChatMessage[];
 } & OpenAIConfig;
 
+const getUrl = () => {
+  console.log(`process : ${process.env.AZURE_OPENAI_API_URL}`);
+  if (process.env.AZURE_OPENAI_API_URL == undefined) {
+    return `https://${process.env.AZURE_OPENAI_NAME}.openai.azure.com/openai/deployments/${process.env.AZURE_OPENAI_DEPLOYMENT_NAME}/chat/completions?api-version=${process.env.AZURE_OPENAI_API_VERSION}`;
+  }
+  return process.env.AZURE_OPENAI_API_URL || "";
+};
+
 export const getOpenAICompletion = async (
   token: string,
   payload: OpenAIRequest
 ) => {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
+  const url = getUrl();
 
-  const response = await fetch(`https://${process.env.AZURE_OPENAI_NAME}.openai.azure.com/openai/deployments/${process.env.AZURE_OPENAI_DEPLOYMENT_NAME}/chat/completions?api-version=${process.env.AZURE_OPENAI_API_VERSION}`, {
+  const response = await fetch(url, {
     headers: {
       "api-key": process.env.AZURE_OPENAI_API_KEY!,
       "Content-Type": "application/json",
